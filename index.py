@@ -1,52 +1,47 @@
-import os
+import random
+import string
 
-# Function to clear the terminal
+def generate_password(length, use_uppercase=True, use_numbers=True, use_special_chars=True):
+   
+    lowercase = string.ascii_lowercase
+    uppercase = string.ascii_uppercase if use_uppercase else ''
+    digits = string.digits if use_numbers else ''
+    special_chars = string.punctuation if use_special_chars else ''
 
-def clear_terminal():
-    os.system('cls' if os.name == 'nt' else 'clear')
+   
+    all_chars = lowercase + uppercase + digits + special_chars
+    
+    if not all_chars:
+        raise ValueError("At least one character set must be selected.")
 
-# Function to display the to-do list
-
-def display_todo_list(todo_list):
-    clear_terminal()
-    print("\033[1;34m" + "=" * 30 + "\033[0m")
-    print("\033[1;32m" + "      My Unique To-Do List" + "\033[0m")
-    print("\033[1;34m" + "=" * 30 + "\033[0m")
-    if not todo_list:
-        print("\033[1;31m" + "      No tasks added!" + "\033[0m")
-    else:
-        for idx, task in enumerate(todo_list, start=1):
-            print(f"\033[1;33m{idx}. {task}\033[0m")
-    print("\033[1;34m" + "=" * 30 + "\033[0m")
-
-# Main program
+    
+    password = ''.join(random.choice(all_chars) for _ in range(length))
+    return password
 
 def main():
-    todo_list = []
+    print("Welcome to the Password Generator!")
+    
     while True:
-        display_todo_list(todo_list)
-        print("\033[1;35m1. Add Task\033[0m")
-        print("\033[1;36m2. Remove Task\033[0m")
-        print("\033[1;37m3. Exit\033[0m")
-        choice = input("Choose an option: ")
+        try:
+            length = int(input("Enter the desired length of the password (minimum 4): "))
+            if length < 4:
+                print("Password length must be at least 4.")
+                continue
+            
+            use_uppercase = input("Include uppercase letters? (y/n): ").lower() == 'y'
+            use_numbers = input("Include numbers? (y/n): ").lower() == 'y'
+            use_special_chars = input("Include special characters? (y/n): ").lower() == 'y'
 
-        if choice == '1':
-            task = input("Enter your task: ")
-            todo_list.append(task)
-        elif choice == '2':
-            try:
-                task_index = int(input("Enter task number to remove: ")) - 1
-                if 0 <= task_index < len(todo_list):
-                    todo_list.pop(task_index)
-                else:
-                    print("\033[1;31mInvalid task number!\033[0m")
-            except ValueError:
-                print("\033[1;31mPlease enter a valid number!\033[0m")
-        elif choice == '3':
-            print("\033[1;32mGoodbye!\033[0m")
-            break
-        else:
-            print("\033[1;31mInvalid choice, please try again.\033[0m")
+            password = generate_password(length, use_uppercase, use_numbers, use_special_chars)
+            print(f"\nGenerated Password: {password}\n")
+
+            if input("Generate another password? (y/n): ").lower() != 'y':
+                break
+
+        except ValueError as ve:
+            print(f"Error: {ve}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
     main()
